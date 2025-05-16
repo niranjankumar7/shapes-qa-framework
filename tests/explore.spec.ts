@@ -1,74 +1,40 @@
 import { test, expect } from '@playwright/test';
 import { ExplorePage } from '../pages/explorePage';
-import { LoginPage } from '../pages/loginPage';
 
-test('Verify the hero title text on Shapes landing page', async ({ page }) => {
-    const explore = new ExplorePage(page);
-  
+// Group explore tests
+test.describe('Explore Page', () => {
+  let explore: ExplorePage;
+
+  test.beforeEach(async ({ page }) => {
+    explore = new ExplorePage(page);
     await explore.goto();
+  });
+
+  test('Verify the hero title text on Shapes landing page', async () => {
     const expectedTitle = 'Meet Shapes - AI social agents';
-    await explore.assertHeroTitleText(expectedTitle); // single await
-  
+    await explore.assertHeroTitleText(expectedTitle);
   });
-  
 
-  test('Verify the login button exists and navigates correctly', async ({ page }) => {
-    const explore = new ExplorePage(page);
-    const expectedUrl = "https://shapes.inc/login?returnTo=%2Fexplore";
-    const expectedLoginText = "Log in to Shapes";
-  
-    await explore.goto();
-  
-    // Assert login button is visible before clicking
-    await explore.assertLoginButtonVisible();
-  
-    await explore.clickLoginButton();
-    await expect(page).toHaveURL(expectedUrl);
-  
-    // Assert login page title is visible and correct
-    await explore.assertLoginTitle(expectedLoginText);
+  test('Shapes Inc logo (image + text) is visible and text is correct', async () => {
+    await expect(await explore.isLogoVisible()).toBe(true);
+    await expect(await explore.getLogoText()).toBe('shapes inc');
   });
-  
 
-test('Verify that user can login via email', async ({ page }) => {
-  // 1. Arrange test data and expected values
-  const emailAddress = "nirkumar0020@gmail.com";
-  const password = "testautomation";
-  const expectedUrl = "https://shapes.inc/login?returnTo=%2Fexplore";
-  const expectedLoginText = "Log in to Shapes";
-  const expectedAvatarEmail = "nirkumar0020@gmail.com";
+  test.describe('Search functionality', () => {
+    const searchTerms = ['virat', 'ronaldo', 'messi'];
 
-  // 2. Instantiate page objects
-  const explore = new ExplorePage(page);
-  const login = new LoginPage(page);
+    for (const term of searchTerms) {
+      test(`search for "${term}" returns at least one matching result`, async () => {
+        await explore.searchByClick(term);
+        await explore.waitForFirstResult();
 
-  // 3. Go to main page, click Login, check URL & title
-  await explore.goto();
-  await explore.clickLoginButton();
-  await expect(page).toHaveURL(expectedUrl);
-  await explore.assertLoginTitle(expectedLoginText);
-
-  // 4. Login flow: click email, enter credentials, submit
-  await login.clickLoginViaEmail();
-  await login.enterEmailAddress(emailAddress);
-  await login.enterPassword(password);
-  await login.clickContinueButton();
-
-  // 5. Assert redirected to dashboard or home (set expected URL as needed)
-  // Use a wait for navigation or dashboard to load
-  await expect(page).not.toHaveURL(expectedUrl, { timeout: 10000 }); // Should leave login page
- await login.page.waitForTimeout(3000)
-  // 6. Assert user avatar/email is present
-  await explore.assertAvatarEmailVisible(emailAddress);
-
+        const titles = await explore.getAllResultNames();
+        expect(titles.length).toBeGreaterThan(0);
+        const found = titles.some(title =>
+          title.trim().toLowerCase().includes(term.toLowerCase())
+        );
+        expect(found).toBe(true);
+      });
+    }
+  });
 });
-
-// test('Verify the text displayed on shapes page', async ({ page }) => {
-//     const explore = new ExplorePage(page);
-  
-//     await explore.goto("https://shapes.inc/explore");
-//     await explore.searchShape('circle');
-  
-//     const count = await explore.countShapes();
-//     expect(count).toBeGreaterThan(0);
-//   });

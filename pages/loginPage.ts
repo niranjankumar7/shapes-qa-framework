@@ -45,4 +45,21 @@ export class LoginPage {
     await expect(this.continueButton).toBeVisible();
     await this.continueButton.click();
   }
+
+  // --- Alternative Login Validation ---
+  /**
+   * Checks if the user is logged in by inspecting authentication cookie presence.
+   */
+  async isLoggedInViaCookie(): Promise<boolean> {
+    const cookies = await this.page.context().cookies();
+    // adjust cookie names according to your auth setup
+    return cookies.some(c => c.name === 'auth_token' || c.name === 'auth0.is.authenticated');
+  }
+
+  /**
+   * Checks if the user is logged in by verifying localStorage auth token.
+   */
+  async isLoggedInViaLocalStorage(): Promise<boolean> {
+    return this.page.evaluate(() => Boolean(localStorage.getItem('auth_token')));
+  }
 }
