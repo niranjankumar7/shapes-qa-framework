@@ -10,18 +10,18 @@ test.describe('Login Page Flow', () => {
     await explore.goto();
   });
 
-//   test('Verify the login button exists and navigates correctly', async ({ page }) => {
-//     const explore = new ExplorePage(page);
-//     const expectedUrl = 'https://shapes.inc/login?returnTo=%2Fexplore';
-//     const expectedLoginText = 'Log in to Shapes';
+  test('Verify the login button exists and navigates correctly', async ({ page }) => {
+    const explore = new ExplorePage(page);
+    const expectedUrl = 'https://shapes.inc/login?returnTo=%2Fexplore';
+    const expectedLoginText = 'Log in to Shapes';
 
-//     await explore.assertLoginButtonVisible();
-//     await explore.clickLoginButton();
+    await explore.assertLoginButtonVisible();
+    await explore.clickLoginButton();
 
-//     // now `page` is defined
-//     await expect(page).toHaveURL(expectedUrl);
-//     await explore.assertLoginTitle(expectedLoginText);
-//   });
+    // now `page` is defined
+    await expect(page).toHaveURL(expectedUrl);
+    await explore.assertLoginTitle(expectedLoginText);
+  });
 
   test('Verify that user can login via email', async ({ page }) => {
     const explore = new ExplorePage(page);
