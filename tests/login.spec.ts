@@ -42,12 +42,8 @@ test.describe('Login Page Flow', () => {
     await login.clickContinueButton();
 
     // Validating we have successfully logged in
-    // await explore.openAccountMenu();
-    // await explore.assertMyAccountVisible();
-    // after login flow:
-    // expect(await login.isLoggedInViaCookie()).toBe(true);
-    // // or
-    // expect(await login.isLoggedInViaLocalStorage()).toBe(true);
+    const currentUrl = page.url();
+    expect(currentUrl).toContain("shapes.inc"); 
 
   });
 });
